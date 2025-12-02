@@ -1,0 +1,30 @@
+{
+  "name": "concert-ticketing-system",
+  "version": "1.0.0",
+  "description": "Event Registration and Ticketing System for Concerts - CS 301 Database Project",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "init-db": "mysql -u root -p concert_ticketing < schema.sql && mysql -u root -p concert_ticketing < data_generator.sql"
+  },
+  "keywords": [
+    "concert",
+    "ticketing",
+    "database",
+    "mysql",
+    "express"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.6.5",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "body-parser": "^1.20.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

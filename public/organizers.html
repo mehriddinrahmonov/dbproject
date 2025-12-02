@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizer Dashboard - ConcertHub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        .dashboard-container {
+            padding: 2rem 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-brand);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .events-table {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            backdrop-filter: blur(10px);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        th {
+            background: rgba(15, 23, 42, 0.6);
+            color: var(--text-main);
+            font-weight: 600;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>🎵 ConcertHub</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Events</a>
+                <a href="checkout.html">Cart</a>
+                <a href="my-tickets.html">My Tickets</a>
+                <a href="organizers.html" class="active">For Organizers</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="dashboard-container">
+        <div class="container">
+            <h2 class="section-title">Organizer Dashboard</h2>
+
+            <!-- Organizer Selection -->
+            <div style="max-width: 400px; margin: 0 auto 2rem;">
+                <select id="organizerSelect" class="filter-select" style="width: 100%;">
+                    <option value="">Select an organizer...</option>
+                </select>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div id="dashboardContent" style="display: none;">
+                <!-- Statistics Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalEvents">0</div>
+                        <div class="stat-label">Total Events</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalTickets">0</div>
+                        <div class="stat-label">Tickets Sold</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalRevenue">$0</div>
+                        <div class="stat-label">Total Revenue</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgTicketPrice">$0</div>
+                        <div class="stat-label">Avg Ticket Price</div>
+                    </div>
+                </div>
+
+                <!-- Recent Events Table -->
+                <h3 style="margin-bottom: 1rem;">Recent Events</h3>
+                <div class="events-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Event Title</th>
+                                <th>Date</th>
+                                <th>Venue</th>
+                                <th>Tickets Sold</th>
+                                <th>Revenue</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="eventsTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 2rem;">
+                                    Loading events...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Revenue by Category -->
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Revenue by Genre</h3>
+                <div id="categoryRevenue" class="stats-grid">
+                    <!-- Will be populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 ConcertHub - CS 301 Database Systems Project</p>
+        </div>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        let organizers = [];
+
+        // Load organizers on page load
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadOrganizers();
+            setupEventListeners();
+        });
+
+        async function loadOrganizers() {
+            try {
+                const data = await apiRequest('/organizers');
+                organizers = data.data;
+
+                const select = document.getElementById('organizerSelect');
+                organizers.forEach(org => {
+                    const option = document.createElement('option');
+                    option.value = org.id;
+                    option.textContent = `${org.company_name} (${org.name})`;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error loading organizers:', error);
+                showNotification('Failed to load organizers', 'error');
+            }
+        }
+
+        async function loadDashboard(organizerId) {
+            try {
+                const data = await apiRequest(`/organizers/${organizerId}/dashboard`);
+                const { statistics, recent_events, revenue_by_category } = data.data;
+
+                // Update statistics
+                document.getElementById('totalEvents').textContent = statistics.total_events || 0;
+                document.getElementById('totalTickets').textContent = (statistics.total_tickets_sold || 0).toLocaleString();
+                document.getElementById('totalRevenue').textContent = formatPrice(statistics.total_revenue || 0);
+                document.getElementById('avgTicketPrice').textContent = formatPrice(statistics.avg_ticket_price || 0);
+
+                // Update events table
+                const tbody = document.getElementById('eventsTableBody');
+                tbody.innerHTML = '';
+
+                if (recent_events && recent_events.length > 0) {
+                    recent_events.forEach(event => {
+                        const row = tbody.insertRow();
+                        row.innerHTML = `
+                            <td><strong>${event.title}</strong><br>
+                                <small style="color: var(--text-muted);">${event.category}</small>
+                            </td>
+                            <td>${formatDate(event.event_date)}</td>
+                            <td>${event.venue_name}<br>
+                                <small style="color: var(--text-muted);">Capacity: ${event.capacity}</small>
+                            </td>
+                            <td>${(event.tickets_sold || 0).toLocaleString()}</td>
+                            <td>${formatPrice(event.revenue || 0)}</td>
+                            <td><span class="badge badge-${event.status === 'upcoming' ? 'success' : 'warning'}">${event.status}</span></td>
+                        `;
+                    });
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 2rem;">No events found</td></tr>';
+                }
+
+                // Update revenue by category
+                const categoryDiv = document.getElementById('categoryRevenue');
+                categoryDiv.innerHTML = '';
+
+                if (revenue_by_category && revenue_by_category.length > 0) {
+                    revenue_by_category.forEach(cat => {
+                        if (cat.revenue > 0) {
+                            const card = document.createElement('div');
+                            card.className = 'stat-card';
+                            card.innerHTML = `
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">
+                                    ${getGenreEmoji(cat.category)}
+                                </div>
+                                <div style="font-size: 1.5rem; font-weight: 700; color: var(--accent);">
+                                    ${formatPrice(cat.revenue)}
+                                </div>
+                                <div class="stat-label">${cat.category}</div>
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 0.25rem;">
+                                    ${cat.tickets_sold} tickets
+                                </div>
+                            `;
+                            categoryDiv.appendChild(card);
+                        }
+                    });
+                }
+
+                // Show dashboard
+                document.getElementById('dashboardContent').style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showNotification('Failed to load dashboard data', 'error');
+            }
+        }
+
+        function setupEventListeners() {
+            const organizerSelect = document.getElementById('organizerSelect');
+            organizerSelect.addEventListener('change', (e) => {
+                if (e.target.value) {
+                    loadDashboard(e.target.value);
+                } else {
+                    document.getElementById('dashboardContent').style.display = 'none';
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

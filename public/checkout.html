@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - ConcertHub</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        .checkout-container {
+            padding: 4rem 0;
+            min-height: 80vh;
+        }
+
+        .checkout-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(30, 41, 59, 0.8);
+        }
+
+        .cart-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            position: sticky;
+            top: 100px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-light);
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--text-main);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-brand">
+                <h1>🎵 ConcertHub</h1>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Events</a>
+                <a href="checkout.html" class="active">Cart</a>
+                <a href="my-tickets.html">My Tickets</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="checkout-container">
+        <div class="container">
+            <h2 class="section-title">Checkout</h2>
+
+            <div class="checkout-grid">
+                <!-- Left Column: User Details & Cart -->
+                <div>
+                    <div class="card"
+                        style="background: var(--bg-card); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-light); margin-bottom: 2rem;">
+                        <h3 style="margin-bottom: 1.5rem;">Contact Information</h3>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" id="email" class="form-input" placeholder="john@example.com">
+                        </div>
+
+                        <div id="newAttendeeFields" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <input type="text" id="firstName" class="form-input" placeholder="John">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <input type="text" id="lastName" class="form-input" placeholder="Doe">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Phone (Optional)</label>
+                                <input type="tel" id="phone" class="form-input" placeholder="555-0123">
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 1rem;">Order Items</h3>
+                    <div id="cartItems">
+                        <!-- Cart items will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Right Column: Summary -->
+                <div>
+                    <div class="summary-card">
+                        <h3 style="margin-bottom: 1.5rem;">Order Summary</h3>
+
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="subtotal">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Service Fee</span>
+                            <span id="serviceFee">$0.00</span>
+                        </div>
+
+                        <div class="summary-total">
+                            <span>Total</span>
+                            <span id="total">$0.00</span>
+                        </div>
+
+                        <button id="checkoutBtn" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">
+                            Complete Purchase
+                        </button>
+
+                        <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                            Secure payment processing
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="js/app.js"></script>
+    <script>
+        let cart = [];
+        let attendeeId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCart();
+
+            // Pre-fill email if user is logged in
+            const user = getCurrentUser();
+            if (user && user.email) {
+                document.getElementById('email').value = user.email;
+                checkEmail(user.email);
+            }
+        });
+
+        // Check email when user types
+        const emailInput = document.getElementById('email');
+        let debounceTimer;
+
+        emailInput.addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => checkEmail(e.target.value), 500);
+        });
+
+        async function checkEmail(email) {
+            if (!email || !email.includes('@')) return;
+
+            try {
+                const data = await apiRequest(`/attendees/email/${email}`);
+                attendeeId = data.data.id;
+                document.getElementById('newAttendeeFields').style.display = 'none';
+                showNotification('Welcome back! ' + data.data.first_name, 'success');
+            } catch (error) {
+                // User not found, show registration fields
+                attendeeId = null;
+                document.getElementById('newAttendeeFields').style.display = 'block';
+            }
+        }
+
+        function loadCart() {
+            cart = getCartItems();
+            const container = document.getElementById('cartItems');
+
+            if (cart.length === 0) {
+                container.innerHTML = '<div class="text-center" style="padding: 2rem; color: var(--text-muted);">Your cart is empty</div>';
+                updateSummary();
+                return;
+            }
+
+            container.innerHTML = cart.map((item, index) => `
+                <div class="cart-item">
+                    <div>
+                        <h4 style="margin-bottom: 0.25rem;">${item.typeName} Ticket</h4>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">Event ID: ${item.eventId}</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <span style="font-weight: 600; color: var(--accent);">${formatPrice(item.price)}</span>
+                        <button onclick="removeFromCart(${index})" style="background: none; border: none; color: var(--danger); cursor: pointer;">
+                            &times;
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+
+            updateSummary();
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+        }
+
+        function updateSummary() {
+            const subtotal = cart.reduce((sum, item) => sum + parseFloat(item.price), 0);
+            const fee = subtotal * 0.10; // 10% service fee
+            const total = subtotal + fee;
+
+            document.getElementById('subtotal').textContent = formatPrice(subtotal);
+            document.getElementById('serviceFee').textContent = formatPrice(fee);
+            document.getElementById('total').textContent = formatPrice(total);
+
+            document.getElementById('checkoutBtn').disabled = cart.length === 0;
+        }
+
+        document.getElementById('checkoutBtn').addEventListener('click', async () => {
+            const email = document.getElementById('email').value;
+
+            if (!email) {
+                showNotification('Please enter your email', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('checkoutBtn');
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+
+            try {
+                // 1. Create/Get Attendee
+                if (!attendeeId) {
+                    const firstName = document.getElementById('firstName').value;
+                    const lastName = document.getElementById('lastName').value;
+                    const phone = document.getElementById('phone').value;
+
+                    if (!firstName || !lastName) {
+                        throw new Error('Please fill in your name');
+                    }
+
+                    const newAttendee = await apiRequest('/attendees', {
+                        method: 'POST',
+                        body: JSON.stringify({ firstName, lastName, email, phone })
+                    });
+                    attendeeId = newAttendee.data.id;
+                }
+
+                // 2. Process Reservations
+                for (const item of cart) {
+                    await apiRequest('/tickets/reserve', {
+                        method: 'POST',
+                        body: JSON.stringify({
+                            eventId: item.eventId,
+                            ticketTypeId: item.ticketTypeId,
+                            attendeeId: attendeeId,
+                            quantity: 1
+                        })
+                    });
+                }
+
+                // 3. Success
+                clearCart();
+                // Save user for future
+                setCurrentUser({ id: attendeeId, email, firstName: document.getElementById('firstName').value });
+
+                showNotification('Purchase successful!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'my-tickets.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Checkout error:', error);
+                showNotification(error.message || 'Checkout failed', 'error');
+                btn.disabled = false;
+                btn.textContent = 'Complete Purchase';
+            }
+        });
+    </script>
+</body>
+
+</html>
