@@ -1,11 +1,4 @@
--- ================================================================
--- Concert Ticketing System - Sample Data Generation
--- Creates realistic test data for concerts, venues, attendees, etc.
--- ================================================================
 
--- ================================================================
--- ORGANIZERS (10+ concert promoters and event companies)
--- ================================================================
 INSERT INTO organizers (name, email, phone, company_name) VALUES
 ('Michael Thompson', 'michael@livenation.com', '555-0101', 'Live Nation Entertainment'),
 ('Sarah Martinez', 'sarah@aegpresents.com', '555-0102', 'AEG Presents'),
@@ -19,7 +12,7 @@ INSERT INTO organizers (name, email, phone, company_name) VALUES
 ('Michelle Davis', 'michelle@concertpromoter.com', '555-0110', 'Independent Concert Promoter'),
 ('Thomas Garcia', 'thomas@localshows.com', '555-0111', 'Local Shows LLC'),
 ('Amanda Johnson', 'amanda@megaevents.com', '555-0112', 'Mega Events International');
--- Additional random organizers
+
 INSERT INTO organizers (name, email, phone, company_name) VALUES
 ('Olivia Stone', 'olivia@starlight.com', '555-0201', 'Starlight Events'),
 ('Ethan Reed', 'ethan@pulsepromo.com', '555-0202', 'Pulse Promo'),
@@ -27,9 +20,6 @@ INSERT INTO organizers (name, email, phone, company_name) VALUES
 ('Liam Brooks', 'liam@echoent.com', '555-0204', 'Echo Entertainment'),
 ('Sofia Patel', 'sofia@novaarts.com', '555-0205', 'Nova Arts');
 
--- ================================================================
--- VENUES (20+ concert venues)
--- ================================================================
 INSERT INTO venues (name, address, city, state, capacity, venue_type) VALUES
 ('Madison Square Garden', '4 Pennsylvania Plaza', 'New York', 'NY', 20789, 'arena'),
 ('The Forum', '3900 W Manchester Blvd', 'Inglewood', 'CA', 17500, 'arena'),
@@ -53,16 +43,14 @@ INSERT INTO venues (name, address, city, state, capacity, venue_type) VALUES
 ('Electric Factory', '421 N 7th St', 'Philadelphia', 'PA', 3000, 'club'),
 ('Soldier Field', '1410 Special Olympics Dr', 'Chicago', 'IL', 61500, 'stadium'),
 ('Staples Center', '1111 S Figueroa St', 'Los Angeles', 'CA', 20000, 'arena');
--- Additional random venues
+
 INSERT INTO venues (name, address, city, state, capacity, venue_type) VALUES
 ('The Mirage Theater', '123 Mirage Rd', 'Las Vegas', 'NV', 5000, 'theater'),
 ('Sunset Amphitheatre', '456 Sunset Blvd', 'San Diego', 'CA', 8000, 'outdoor'),
 ('Riverfront Arena', '789 River St', 'Portland', 'OR', 12000, 'arena'),
 ('Mountain View Pavilion', '321 Alpine Way', 'Denver', 'CO', 6500, 'theater'),
 ('Harbor Hall', '654 Harbor Dr', 'Seattle', 'WA', 4000, 'club');
--- ================================================================
--- ATTENDEES (200+ customers)
--- ================================================================
+
 INSERT INTO attendees (first_name, last_name, email, phone, date_of_birth) VALUES
 ('John', 'Smith', 'john.smith@email.com', '555-1001', '1995-03-15'),
 ('Emily', 'Johnson', 'emily.j@email.com', '555-1002', '1998-07-22'),
@@ -105,7 +93,7 @@ INSERT INTO attendees (first_name, last_name, email, phone, date_of_birth) VALUE
 ('Jonathan', 'Nelson', 'jon.nelson@email.com', '555-1039', '1997-06-29'),
 ('Danielle', 'Carter', 'danielle.c@email.com', '555-1040', '1991-09-10');
 
--- Additional attendees (40 more for total 200+)
+
 INSERT INTO attendees (first_name, last_name, email, phone, date_of_birth)
 SELECT 
     CONCAT('User', n) as first_name,
@@ -148,9 +136,7 @@ FROM (
     SELECT 196 UNION SELECT 197 UNION SELECT 198 UNION SELECT 199 UNION SELECT 200
 ) numbers;
 
--- ================================================================
--- PROMO CODES
--- ================================================================
+
 INSERT INTO promo_codes (code, discount_percent, discount_amount, valid_from, valid_until, max_uses, uses_count, active) VALUES
 ('EARLYBIRD2025', 20.00, 0.00, '2025-01-01 00:00:00', '2025-03-31 23:59:59', 100, 0, TRUE),
 ('SUMMER25', 15.00, 0.00, '2025-06-01 00:00:00', '2025-08-31 23:59:59', 200, 0, TRUE),
@@ -158,9 +144,6 @@ INSERT INTO promo_codes (code, discount_percent, discount_amount, valid_from, va
 ('STUDENT10', 10.00, 0.00, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 500, 0, TRUE),
 ('GROUPBUY', 25.00, 0.00, '2025-01-01 00:00:00', '2025-12-31 23:59:59', 75, 0, TRUE);
 
--- ================================================================
--- EVENTS (50+ concert events with various genres and dates)
--- ================================================================
 INSERT INTO events (title, description, event_date, start_time, end_time, venue_id, organizer_id, category, status) VALUES
 ('Taylor Swift - The Eras Tour', 'An unforgettable journey through Taylor Swift''s musical eras', '2025-06-15', '19:00:00', '23:00:00', 1, 1, 'Pop', 'upcoming'),
 ('Metallica - World Tour 2025', 'Heavy metal legends return to the stage', '2025-07-20', '20:00:00', '23:30:00', 13, 2, 'Metal', 'upcoming'),
@@ -213,11 +196,7 @@ INSERT INTO events (title, description, event_date, start_time, end_time, venue_
 ('Glass Animals - I Love You So Much', 'Indie electronic excellence', '2025-06-14', '19:30:00', '21:30:00', 9, 7, 'Electronic', 'upcoming'),
 ('Vampire Weekend - Only God Tour', 'Indie rock with worldly influences', '2025-07-20', '19:00:00', '21:00:00', 16, 7, 'Indie', 'upcoming');
 
--- ================================================================
--- TICKET TYPES (Multiple types per event)
--- ================================================================
 
--- Ticket types for major arena/stadium shows
 INSERT INTO ticket_types (event_id, type_name, price, quantity_available, description, perks) VALUES
 -- Taylor Swift (Event 1)
 (1, 'VIP Package', 899.99, 200, 'Premium seating with exclusive perks', 'Meet & greet, merchandise bundle, early entry, backstage tour'),
@@ -236,8 +215,7 @@ INSERT INTO ticket_types (event_id, type_name, price, quantity_available, descri
 (3, 'Silver Package', 349.99, 2000, 'Great seats at mid-price', 'Mid-level seating, poster included'),
 (3, 'General Admission', 199.99, 8000, 'Standard concert access', 'Upper level seating');
 
--- Add ticket types for remaining events (simplified for brevity)
--- Events 4-50: 2-3 ticket types each
+
 INSERT INTO ticket_types (event_id, type_name, price, quantity_available, description, perks)
 SELECT 
     e.id,
@@ -286,15 +264,10 @@ FROM events e
 JOIN venues v ON e.venue_id = v.id
 WHERE e.id >= 4 AND e.id <= 30;
 
--- ================================================================
--- TICKETS (500+ realistic ticket purchases)
--- ================================================================
 
--- Temporarily drop trigger to avoid recursion error during bulk insert
 DROP TRIGGER IF EXISTS update_ticket_type_quantity;
 
--- Generate realistic ticket purchases
--- Popular shows sell more tickets
+
 INSERT INTO tickets (event_id, ticket_type_id, attendee_id, seat_number, purchase_date, status, is_vip)
 SELECT 
     tt.event_id,
@@ -322,7 +295,6 @@ JOIN (
 WHERE tt.event_id <= 30  -- More tickets for first 30 events
 AND numbers.n <= GREATEST(5, FLOOR(tt.quantity_available * 0.3));
 
--- Manually update quantities since trigger was disabled
 UPDATE ticket_types tt
 JOIN (
     SELECT ticket_type_id, COUNT(*) as sold
@@ -331,7 +303,6 @@ JOIN (
 ) t ON tt.id = t.ticket_type_id
 SET tt.quantity_available = tt.quantity_available - t.sold;
 
--- Recreate trigger
 DELIMITER //
 CREATE TRIGGER update_ticket_type_quantity
 AFTER INSERT ON tickets
@@ -344,11 +315,7 @@ BEGIN
 END//
 DELIMITER ;
 
--- ================================================================
--- PAYMENTS (Match ticket purchases)
--- ================================================================
 
--- Create payments for paid/used tickets
 INSERT INTO payments (attendee_id, amount, payment_method, payment_date, promo_code_id, transaction_id, status)
 SELECT DISTINCT
     t.attendee_id,
@@ -377,11 +344,6 @@ JOIN ticket_types tt ON t.ticket_type_id = tt.id
 WHERE t.status IN ('paid', 'used', 'reserved')
 LIMIT 400;
 
--- ================================================================
--- PAYMENT_TICKETS (Link payments to tickets)
--- ================================================================
-
--- Link each payment to corresponding tickets
 INSERT INTO payment_tickets (payment_id, ticket_id)
 SELECT 
     p.id as payment_id,
@@ -395,11 +357,7 @@ AND NOT EXISTS (
 )
 LIMIT 500;
 
--- ================================================================
--- VERIFICATION QUERIES
--- ================================================================
 
--- Show summary statistics
 SELECT 'Database populated successfully!' as message;
 
 SELECT 
