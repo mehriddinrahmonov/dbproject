@@ -1,15 +1,7 @@
-// ================================================================
-// Payments API Routes
-// Handles payment processing and promo codes
-// ================================================================
-
 const express = require('express');
 const router = express.Router();
 const { promisePool } = require('../config/database');
 
-// ================================================================
-// POST /api/payments/process - Process payment for tickets
-// ================================================================
 router.post('/process', async (req, res) => {
     const connection = await promisePool.getConnection();
 
@@ -25,7 +17,6 @@ router.post('/process', async (req, res) => {
 
         await connection.beginTransaction();
 
-        // Get ticket prices
         const [tickets] = await connection.query(
             `SELECT t.*, tt.price 
              FROM tickets t
@@ -43,12 +34,10 @@ router.post('/process', async (req, res) => {
             });
         }
 
-        // Calculate total
         let totalAmount = tickets.reduce((sum, ticket) => sum + parseFloat(ticket.price), 0);
         let promoCodeId = null;
         let discountAmount = 0;
 
-        // Apply promo code if provided
         if (promoCode) {
             const [promoCodes] = await connection.query(
                 `SELECT * FROM promo_codes 
@@ -73,7 +62,6 @@ router.post('/process', async (req, res) => {
             }
         }
 
-        // Create payment record
         const transactionId = `TXN-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
         const [paymentResult] = await connection.query(
@@ -84,14 +72,12 @@ router.post('/process', async (req, res) => {
 
         const paymentId = paymentResult.insertId;
 
-        // Link payment to tickets
         for (const ticketId of ticketIds) {
             await connection.query(
                 `INSERT INTO payment_tickets (payment_id, ticket_id) VALUES (?, ?)`,
                 [paymentId, ticketId]
             );
 
-            // Update ticket status to paid
             await connection.query(
                 `UPDATE tickets SET status = 'paid' WHERE id = ?`,
                 [ticketId]
@@ -124,9 +110,6 @@ router.post('/process', async (req, res) => {
     }
 });
 
-// ================================================================
-// POST /api/payments/validate-promo - Validate promo code
-// ================================================================
 router.post('/validate-promo', async (req, res) => {
     try {
         const { code, amount } = req.body;
@@ -182,9 +165,6 @@ router.post('/validate-promo', async (req, res) => {
     }
 });
 
-// ================================================================
-// GET /api/payments/:id - Get payment details
-// ================================================================
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;

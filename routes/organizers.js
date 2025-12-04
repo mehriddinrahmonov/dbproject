@@ -1,20 +1,11 @@
-// ================================================================
-// Organizers API Routes
-// Handles organizer dashboard and analytics
-// ================================================================
-
 const express = require('express');
 const router = express.Router();
 const { promisePool } = require('../config/database');
 
-// ================================================================
-// GET /api/organizers/:id/dashboard - Get organizer dashboard data
-// ================================================================
 router.get('/:id/dashboard', async (req, res) => {
     try {
         const { id } = req.params;
 
-        // Get overall statistics
         const [stats] = await promisePool.query(`
             SELECT 
                 COUNT(DISTINCT e.id) AS total_events,
@@ -27,7 +18,6 @@ router.get('/:id/dashboard', async (req, res) => {
             WHERE e.organizer_id = ?
         `, [id]);
 
-        // Get events with sales data
         const [events] = await promisePool.query(`
             SELECT 
                 e.id,
@@ -49,7 +39,6 @@ router.get('/:id/dashboard', async (req, res) => {
             LIMIT 10
         `, [id]);
 
-        // Get revenue by category
         const [categoryRevenue] = await promisePool.query(`
             SELECT 
                 e.category,
@@ -80,9 +69,6 @@ router.get('/:id/dashboard', async (req, res) => {
     }
 });
 
-// ================================================================
-// GET /api/organizers - List all organizers
-// ================================================================
 router.get('/', async (req, res) => {
     try {
         const [organizers] = await promisePool.query(`

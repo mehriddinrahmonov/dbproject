@@ -1,15 +1,7 @@
-// ================================================================
-// Venues API Routes
-// Handles venue operations
-// ================================================================
-
 const express = require('express');
 const router = express.Router();
 const { promisePool } = require('../config/database');
 
-// ================================================================
-// GET /api/venues - List all venues
-// ================================================================
 router.get('/', async (req, res) => {
     try {
         const { city, venueType } = req.query;
@@ -56,9 +48,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// ================================================================
-// GET /api/venues/:id - Get venue by ID
-// ================================================================
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -75,7 +64,6 @@ router.get('/:id', async (req, res) => {
             });
         }
 
-        // Get upcoming events at this venue
         const [events] = await promisePool.query(`
             SELECT 
                 e.id,

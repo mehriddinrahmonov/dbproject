@@ -1,15 +1,7 @@
-// ================================================================
-// Tickets API Routes
-// Handles ticket reservations and purchases
-// ================================================================
-
 const express = require('express');
 const router = express.Router();
 const { promisePool } = require('../config/database');
 
-// ================================================================
-// GET /api/tickets/availability/:eventId - Check ticket availability
-// ================================================================
 router.get('/availability/:eventId', async (req, res) => {
     try {
         const { eventId } = req.params;
@@ -44,9 +36,6 @@ router.get('/availability/:eventId', async (req, res) => {
     }
 });
 
-// ================================================================
-// POST /api/tickets/reserve - Reserve tickets (without payment)
-// ================================================================
 router.post('/reserve', async (req, res) => {
     const connection = await promisePool.getConnection();
 
@@ -62,7 +51,6 @@ router.post('/reserve', async (req, res) => {
 
         await connection.beginTransaction();
 
-        // Check availability
         const [ticketType] = await connection.query(
             `SELECT * FROM ticket_types WHERE id = ? AND event_id = ?`,
             [ticketTypeId, eventId]
@@ -76,7 +64,6 @@ router.post('/reserve', async (req, res) => {
             });
         }
 
-        // Check if enough tickets available
         const [soldCount] = await connection.query(
             `SELECT COUNT(*) as sold FROM tickets 
              WHERE ticket_type_id = ? AND status IN ('paid', 'reserved')`,
@@ -93,7 +80,6 @@ router.post('/reserve', async (req, res) => {
             });
         }
 
-        // Reserve tickets
         const ticketIds = [];
         for (let i = 0; i < quantity; i++) {
             const seatNumber = ticketType[0].type_name.includes('VIP')
@@ -134,9 +120,6 @@ router.post('/reserve', async (req, res) => {
     }
 });
 
-// ================================================================
-// GET /api/tickets/my-tickets/:attendeeId - Get user's tickets
-// ================================================================
 router.get('/my-tickets/:attendeeId', async (req, res) => {
     try {
         const { attendeeId } = req.params;

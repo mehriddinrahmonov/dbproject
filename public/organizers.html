@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organizer Dashboard - ConcertHub</title>
+    <title>Organizer Dashboard - Concerts</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -110,16 +110,13 @@
         <div class="container">
             <h2 class="section-title">Organizer Dashboard</h2>
 
-            <!-- Organizer Selection -->
             <div style="max-width: 400px; margin: 0 auto 2rem;">
                 <select id="organizerSelect" class="filter-select" style="width: 100%;">
                     <option value="">Select an organizer...</option>
                 </select>
             </div>
 
-            <!-- Dashboard Content -->
             <div id="dashboardContent" style="display: none;">
-                <!-- Statistics Cards -->
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-value" id="totalEvents">0</div>
@@ -139,7 +136,6 @@
                     </div>
                 </div>
 
-                <!-- Recent Events Table -->
                 <h3 style="margin-bottom: 1rem;">Recent Events</h3>
                 <div class="events-table">
                     <table>
@@ -163,10 +159,8 @@
                     </table>
                 </div>
 
-                <!-- Revenue by Category -->
                 <h3 style="margin-top: 2rem; margin-bottom: 1rem;">Revenue by Genre</h3>
                 <div id="categoryRevenue" class="stats-grid">
-                    <!-- Will be populated dynamically -->
                 </div>
             </div>
         </div>

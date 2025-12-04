@@ -1,12 +1,7 @@
-// ================================================================
-// Events Page Logic - Load and Display Concerts
-// ================================================================
-
 let currentEvents = [];
 let currentOffset = 0;
 const EVENTS_LIMIT = 12;
 
-// Initialize page
 document.addEventListener('DOMContentLoaded', async () => {
     await loadCategories();
     await loadEvents();
@@ -64,7 +59,6 @@ async function loadEvents(append = false) {
 
         displayEvents(currentEvents, append);
 
-        // Show/hide load more button
         const loadMoreContainer = document.getElementById('loadMore');
         if (loadMoreContainer) {
             loadMoreContainer.style.display = data.data.length === EVENTS_LIMIT ? 'block' : 'none';
@@ -243,14 +237,12 @@ function displayTicketTypes(ticketTypes, eventId) {
  * Select ticket (simplified - adds to cart)
  */
 function selectTicket(eventId, ticketTypeId, typeName, price) {
-    // Check if user exists, if not, create a simple session
     let user = getCurrentUser();
     if (!user) {
-        // For demo purposes, create a temp user
         const email = prompt('Please enter your email to continue:');
         if (!email) return;
 
-        user = { id: 1, email: email }; // This would normally create a new attendee via API
+        user = { id: 1, email: email };
         setCurrentUser(user);
     }
 
@@ -264,7 +256,6 @@ function selectTicket(eventId, ticketTypeId, typeName, price) {
 
     closeModal('eventModal');
 
-    // Show success message with option to checkout
     setTimeout(() => {
         if (confirm('Ticket added to cart! Go to checkout?')) {
             window.location.href = 'checkout.html';
@@ -276,13 +267,11 @@ function selectTicket(eventId, ticketTypeId, typeName, price) {
  * Setup event listeners
  */
 function setupEventListeners() {
-    // Search button
     const searchBtn = document.getElementById('searchBtn');
     if (searchBtn) {
         searchBtn.addEventListener('click', () => loadEvents());
     }
 
-    // Search on Enter key
     const searchInput = document.getElementById('searchInput');
     if (searchInput) {
         searchInput.addEventListener('keypress', (e) => {
@@ -292,7 +281,6 @@ function setupEventListeners() {
         });
     }
 
-    // Filter changes
     const categoryFilter = document.getElementById('categoryFilter');
     const statusFilter = document.getElementById('statusFilter');
 
@@ -304,7 +292,6 @@ function setupEventListeners() {
         statusFilter.addEventListener('change', () => loadEvents());
     }
 
-    // Load more button
     const loadMoreBtn = document.querySelector('#loadMore button');
     if (loadMoreBtn) {
         loadMoreBtn.addEventListener('click', () => loadEvents(true));

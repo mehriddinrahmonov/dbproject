@@ -1,15 +1,7 @@
-// ================================================================
-// Events API Routes
-// Handles concert event operations
-// ================================================================
-
 const express = require('express');
 const router = express.Router();
 const { promisePool } = require('../config/database');
 
-// ================================================================
-// GET /api/events - List all concerts with optional filters
-// ================================================================
 router.get('/', async (req, res) => {
     try {
         const { category, status, search, limit = 50, offset = 0 } = req.query;
@@ -77,9 +69,6 @@ router.get('/', async (req, res) => {
     }
 });
 
-// ================================================================
-// GET /api/events/:id - Get concert details by ID
-// ================================================================
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -115,7 +104,6 @@ router.get('/:id', async (req, res) => {
             });
         }
 
-        // Get ticket types for this event
         const [ticketTypes] = await promisePool.query(
             `SELECT * FROM ticket_types WHERE event_id = ? ORDER BY price DESC`,
             [id]
@@ -139,9 +127,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// ================================================================
-// GET /api/events/categories - Get all event categories
-// ================================================================
 router.get('/meta/categories', async (req, res) => {
     try {
         const [categories] = await promisePool.query(

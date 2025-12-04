@@ -1,15 +1,6 @@
-// ================================================================
-// Concert Ticketing System - Main Application Logic
-// ================================================================
-
-// API Base URL
-// API Base URL
 const API_BASE = (window.location.protocol === 'file:' || window.location.hostname === '')
     ? 'http://localhost:3000/api'
     : window.location.origin + '/api';
-
-// Utility Functions
-// ================================================================
 
 /**
  * Make API request with error handling
@@ -86,7 +77,6 @@ function getGenreEmoji(genre) {
  * Show notification
  */
 function showNotification(message, type = 'info') {
-    // Create notification element
     const notification = document.createElement('div');
     notification.className = `notification notification-${type}`;
     notification.style.cssText = `
@@ -105,15 +95,11 @@ function showNotification(message, type = 'info') {
 
     document.body.appendChild(notification);
 
-    // Remove after 3 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
         setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
-
-// Local Storage Helpers
-// ================================================================
 
 /**
  * Get current user from localStorage
@@ -162,9 +148,6 @@ function clearCart() {
     localStorage.removeItem('cart');
 }
 
-// Modal Functions
-// ================================================================
-
 /**
  * Open modal
  */
@@ -185,9 +168,7 @@ function closeModal(modalId) {
     }
 }
 
-// Initialize modal close handlers
 document.addEventListener('DOMContentLoaded', () => {
-    // Close modal when clicking X
     document.querySelectorAll('.modal-close').forEach(closeBtn => {
         closeBtn.addEventListener('click', (e) => {
             const modal = e.target.closest('.modal');
@@ -197,7 +178,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Close modal when clicking outside
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -207,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Export for use in other files
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         API_BASE,

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - ConcertHub</title>
+    <title>Checkout - Concerts</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -116,8 +116,8 @@
             <h2 class="section-title">Checkout</h2>
 
             <div class="checkout-grid">
-                <!-- Left Column: User Details & Cart -->
                 <div>
+
                     <div class="card"
                         style="background: var(--bg-card); padding: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--border-light); margin-bottom: 2rem;">
                         <h3 style="margin-bottom: 1.5rem;">Contact Information</h3>
@@ -145,40 +145,40 @@
 
                     <h3 style="margin-bottom: 1rem;">Order Items</h3>
                     <div id="cartItems">
-                        <!-- Cart items will be loaded here -->
                     </div>
                 </div>
 
-                <!-- Right Column: Summary -->
                 <div>
-                    <div class="summary-card">
-                        <h3 style="margin-bottom: 1.5rem;">Order Summary</h3>
+                    <div>
+                        <div class="summary-card">
+                            <h3 style="margin-bottom: 1.5rem;">Order Summary</h3>
 
-                        <div class="summary-row">
-                            <span>Subtotal</span>
-                            <span id="subtotal">$0.00</span>
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span id="subtotal">$0.00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Service Fee</span>
+                                <span id="serviceFee">$0.00</span>
+                            </div>
+
+                            <div class="summary-total">
+                                <span>Total</span>
+                                <span id="total">$0.00</span>
+                            </div>
+
+                            <button id="checkoutBtn" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">
+                                Complete Purchase
+                            </button>
+
+                            <p
+                                style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
+                                Secure payment processing
+                            </p>
                         </div>
-                        <div class="summary-row">
-                            <span>Service Fee</span>
-                            <span id="serviceFee">$0.00</span>
-                        </div>
-
-                        <div class="summary-total">
-                            <span>Total</span>
-                            <span id="total">$0.00</span>
-                        </div>
-
-                        <button id="checkoutBtn" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;">
-                            Complete Purchase
-                        </button>
-
-                        <p style="text-align: center; margin-top: 1rem; font-size: 0.85rem; color: var(--text-muted);">
-                            Secure payment processing
-                        </p>
                     </div>
                 </div>
             </div>
-        </div>
     </section>
 
     <script src="js/app.js"></script>

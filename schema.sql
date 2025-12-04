@@ -1,10 +1,3 @@
--- ================================================================
--- Concert Ticketing System - MySQL Database Schema
--- Course: CS 301 Fundamentals of Database Systems
--- Normalized to 3NF/BCNF
--- ================================================================
-
--- Drop existing tables if they exist (for clean setup)
 DROP TABLE IF EXISTS payment_tickets;
 DROP TABLE IF EXISTS payments;
 DROP TABLE IF EXISTS tickets;
@@ -15,10 +8,9 @@ DROP TABLE IF EXISTS attendees;
 DROP TABLE IF EXISTS venues;
 DROP TABLE IF EXISTS organizers;
 
--- ================================================================
 -- TABLE: organizers
 -- Represents concert promoters and event companies
--- ================================================================
+
 CREATE TABLE organizers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
@@ -31,10 +23,10 @@ CREATE TABLE organizers (
     INDEX idx_company (company_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ================================================================
+
 -- TABLE: venues
 -- Physical locations where concerts are held
--- ================================================================
+
 CREATE TABLE venues (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(150) NOT NULL,
@@ -51,10 +43,10 @@ CREATE TABLE venues (
     INDEX idx_capacity (capacity)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ================================================================
+
 -- TABLE: attendees
 -- Customers who purchase concert tickets
--- ================================================================
+
 CREATE TABLE attendees (
     id INT AUTO_INCREMENT PRIMARY KEY,
     first_name VARCHAR(50) NOT NULL,
@@ -64,15 +56,14 @@ CREATE TABLE attendees (
     date_of_birth DATE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     
-    -- CHECK removed for MySQL 9.5 compatibility,
     INDEX idx_email (email),
     INDEX idx_name (last_name, first_name)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ================================================================
+
 -- TABLE: promo_codes
 -- Promotional discount codes for ticket sales
--- ================================================================
+
 CREATE TABLE promo_codes (
     id INT AUTO_INCREMENT PRIMARY KEY,
     code VARCHAR(50) NOT NULL UNIQUE,
@@ -94,10 +85,10 @@ CREATE TABLE promo_codes (
     INDEX idx_active (active)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ================================================================
+
 -- TABLE: events
 -- Individual concert events
--- ================================================================
+
 CREATE TABLE events (
     id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
@@ -122,10 +113,10 @@ CREATE TABLE events (
     INDEX idx_organizer (organizer_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ================================================================
+
 -- TABLE: ticket_types
 -- Different ticket categories for each event (VIP, General, etc.)
--- ================================================================
+
 CREATE TABLE ticket_types (
     id INT AUTO_INCREMENT PRIMARY KEY,
     event_id INT NOT NULL,
@@ -144,10 +135,10 @@ CREATE TABLE ticket_types (
     INDEX idx_price (price)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ================================================================
+
 -- TABLE: tickets
 -- Individual tickets purchased by attendees
--- ================================================================
+
 CREATE TABLE tickets (
     id INT AUTO_INCREMENT PRIMARY KEY,
     event_id INT NOT NULL,
@@ -168,10 +159,10 @@ CREATE TABLE tickets (
     INDEX idx_ticket_type (ticket_type_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ================================================================
+
 -- TABLE: payments
 -- Financial transactions for ticket purchases
--- ================================================================
+
 CREATE TABLE payments (
     id INT AUTO_INCREMENT PRIMARY KEY,
     attendee_id INT NOT NULL,
@@ -192,11 +183,9 @@ CREATE TABLE payments (
     INDEX idx_transaction (transaction_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ================================================================
+
 -- TABLE: payment_tickets
--- Junction table linking payments to tickets (M:N relationship)
--- Supports group purchases where one payment includes multiple tickets
--- ================================================================
+
 CREATE TABLE payment_tickets (
     payment_id INT NOT NULL,
     ticket_id INT NOT NULL,
@@ -209,12 +198,11 @@ CREATE TABLE payment_tickets (
     INDEX idx_ticket (ticket_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- ================================================================
+
 -- TRIGGERS
 -- Automated operations for business logic enforcement
--- ================================================================
 
--- Trigger: Increment promo code usage count when applied to a payment
+
 DELIMITER //
 CREATE TRIGGER increment_promo_usage 
 AFTER INSERT ON payments
@@ -228,7 +216,6 @@ BEGIN
 END//
 DELIMITER ;
 
--- Trigger: Validate venue capacity is not exceeded
 DELIMITER //
 CREATE TRIGGER check_venue_capacity
 BEFORE INSERT ON tickets
@@ -284,12 +271,7 @@ BEGIN
 END//
 DELIMITER ;
 
--- ================================================================
--- VIEWS
--- Commonly used queries as views for convenience
--- ================================================================
 
--- View: Event details with venue and organizer information
 CREATE OR REPLACE VIEW event_details AS
 SELECT 
     e.id,
@@ -311,7 +293,6 @@ FROM events e
 JOIN venues v ON e.venue_id = v.id
 JOIN organizers o ON e.organizer_id = o.id;
 
--- View: Ticket sales summary per event
 CREATE OR REPLACE VIEW event_sales_summary AS
 SELECT 
     e.id AS event_id,
@@ -326,11 +307,3 @@ LEFT JOIN ticket_types tt ON t.ticket_type_id = tt.id
 JOIN venues v ON e.venue_id = v.id
 GROUP BY e.id, e.title, v.capacity;
 
--- ================================================================
--- COMMENTS
--- ================================================================
-
--- Database designed for CS 301 Database Systems Project
--- Normalized to 3NF/BCNF with proper constraints
--- Supports: Event management, ticket sales, payments, promo codes
--- Features: Triggers for capacity validation, views for reporting

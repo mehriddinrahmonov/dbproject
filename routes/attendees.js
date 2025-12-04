@@ -1,15 +1,7 @@
-// ================================================================
-// Attendees API Routes
-// Handles customer/attendee operations
-// ================================================================
-
 const express = require('express');
 const router = express.Router();
 const { promisePool } = require('../config/database');
 
-// ================================================================
-// POST /api/attendees - Create new attendee
-// ================================================================
 router.post('/', async (req, res) => {
     try {
         const { firstName, lastName, email, phone, dateOfBirth } = req.body;
@@ -49,9 +41,6 @@ router.post('/', async (req, res) => {
     }
 });
 
-// ================================================================
-// GET /api/attendees/:id - Get attendee by ID
-// ================================================================
 router.get('/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -81,9 +70,6 @@ router.get('/:id', async (req, res) => {
     }
 });
 
-// ================================================================
-// GET /api/attendees/email/:email - Get attendee by email
-// ================================================================
 router.get('/email/:email', async (req, res) => {
     try {
         const { email } = req.params;
